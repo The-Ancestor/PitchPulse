@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register Athlete | PitchPulse</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-full antialiased font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-md w-full space-y-8 bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-lg">
+        <div>
+            <h2 class="text-center text-3xl font-extrabold tracking-tight text-emerald-400">Onboard New Athlete</h2>
+            <p class="mt-2 text-center text-sm text-slate-400">Initialize identity and physical data metrics</p>
+        </div>
+
+        <form class="mt-8 space-y-6" method="POST" action="/player/register">
+            <div class="rounded-md shadow-sm space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">First Name</label>
+                        <input name="first_name" type="text" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Last Name</label>
+                        <input name="last_name" type="text" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Primary Position</label>
+                    <select name="position" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                        <option value="Right Back">Right Back</option>
+                        <option value="Striker">Striker</option>
+                        <option value="Midfielder">Midfielder</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Preferred Foot</label>
+                        <select name="preferred_foot" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                            <option value="Right">Right</option>
+                            <option value="Left">Left</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Baseline Weight (KG)</label>
+                        <input name="weight" type="number" step="0.1" placeholder="70.0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between pt-2">
+                <a href="/dashboard/scout" class="text-xs font-medium text-slate-400 hover:text-slate-200 underline">Cancel</a>
+                <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2 px-6 rounded-lg shadow transition">
+                    Commit to System
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ player.first_name }} {{ player.last_name }} | Player Profile</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-full antialiased font-sans">
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        
+        <!-- Navigation Breadcrumb -->
+        <div class="mb-6">
+            <a href="/dashboard/scout" class="text-xs font-semibold uppercase tracking-wider text-slate-400 hover:text-emerald-400 transition">
+                &larr; Back to Scout Dashboard
+            </a>
+        </div>
+
+        <!-- Session Flash Notification Alerts -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, msg in messages %}
+                    <div class="mb-6 p-4 rounded-lg border text-sm font-medium {% if category == 'success' %} bg-emerald-950/50 border-emerald-800 text-emerald-400 {% else %} bg-rose-950/50 border-rose-800 text-rose-400 {% endif %}">
+                        {{ msg }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Player Hero Header Card -->
+        <div class="bg-slate-900 border border-slate-800 rounded-xl p-6 mb-8 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold tracking-tight text-slate-100">{{ player.first_name }} {{ player.last_name }}</h1>
+                <div class="flex flex-wrap gap-2 mt-2 items-center">
+                    <span class="bg-slate-950 border border-slate-800 rounded px-2.5 py-0.5 text-xs font-mono text-emerald-400">{{ player.primary_position }}</span>
+                    <span class="text-slate-500 text-xs">&bull;</span>
+                    <span class="text-sm text-slate-400">Preferred Foot: <strong>{{ player.preferred_foot }}</strong></span>
+                    <span class="text-slate-500 text-xs">&bull;</span>
+                    <span class="text-sm text-slate-400">Weight: <strong>{{ player.current_weight_kg if player.current_weight_kg else 'N/A' }} kg</strong></span>
+                </div>
+            </div>
+            <div class="text-right">
+                <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Performance Status</p>
+                <span class="inline-flex items-center rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400 ring-1 ring-inset ring-emerald-500/20 mt-1">Available Selection</span>
+            </div>
+        </div>
+
+        <!-- Metric Cards Layout Grid -->
+        <h2 class="text-lg font-bold text-slate-400 mb-4 tracking-wide uppercase text-xs">Lifetime Career Analytics</h2>
+        <div class="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">Match Rating</p>
+                <p class="text-2xl font-bold text-emerald-400 mt-1">{{ "%.2f"|format(stats.lifetime_rating) if stats.lifetime_rating else '0.00' }}</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">Caps (Matches)</p>
+                <p class="text-2xl font-bold text-slate-100 mt-1">{{ stats.matches_played if stats.matches_played else 0 }}</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">Goals</p>
+                <p class="text-2xl font-bold text-slate-100 mt-1">{{ stats.total_goals if stats.total_goals else 0 }}</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">Assists</p>
+                <p class="text-2xl font-bold text-slate-100 mt-1">{{ stats.total_assists if stats.total_assists else 0 }}</p>
+            </div>
+            <div class="bg-slate-900 border border-slate-800 rounded-xl p-4 col-span-2 lg:col-span-1">
+                <p class="text-xs text-slate-400 font-medium uppercase tracking-wide">Defensive Tackles</p>
+                <p class="text-2xl font-bold text-slate-100 mt-1">{{ stats.total_tackles if stats.total_tackles else 0 }}</p>
+            </div>
+        </div>
+
+        <!-- Interactive Split System Architecture -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Left Side: Historical Match Log Display -->
+            <div class="lg:col-span-2">
+                <h3 class="text-base font-bold text-slate-200 mb-4">Historical Performance Match Log</h3>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl overflow-hidden shadow-sm">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="bg-slate-950 border-b border-slate-800 text-xs font-semibold tracking-wider text-slate-400 uppercase">
+                                <th class="py-3 px-4">Opponent</th>
+                                <th class="py-3 px-4 text-center">Mins</th>
+                                <th class="py-3 px-4 text-center">G / A</th>
+                                <th class="py-3 px-4 text-center">Tackles</th>
+                                <th class="py-3 px-4 text-right">Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-slate-800/50 text-sm text-slate-300">
+                            {% for match_stat in player.match_stats %}
+                                <tr class="hover:bg-slate-800/20 transition">
+                                    <td class="py-3 px-4 font-medium text-slate-200">{{ match_stat.match.opponent }}</td>
+                                    <td class="py-3 px-4 text-center font-mono">{{ match_stat.minutes_played }}'</td>
+                                    <td class="py-3 px-4 text-center">{{ match_stat.goals }} / {{ match_stat.assists }}</td>
+                                    <td class="py-3 px-4 text-center">{{ match_stat.tackles_won }}</td>
+                                    <td class="py-3 px-4 text-right font-bold text-emerald-400">{{ "%.1f"|format(match_stat.match_rating) }}</td>
+                                </tr>
+                            {% else %}
+                                <tr>
+                                    <td colspan="5" class="py-8 text-center text-slate-500 font-medium">No performance files mapped for this athlete yet.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Right Side: Ingest New Stat Performance Entry Form -->
+            <div>
+                <h3 class="text-base font-bold text-slate-200 mb-4">Ingest Match Statistics</h3>
+                <div class="bg-slate-900 border border-slate-800 rounded-xl p-5 shadow-sm">
+                    {% if matches %}
+                        <form method="POST" action="/match/log-stat" class="space-y-4">
+                            <!-- Hidden tracking IDs -->
+                            <input type="hidden" name="player_id" value="{{ player.id }}">
+                            
+                            <div>
+                                <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Select Target Match</label>
+                                <select name="match_id" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                                    {% for match in matches %}
+                                        <option value="{{ match.id }}">{{ match.opponent }} ({{ match.match_date.strftime('%Y-%m-%d') }})</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-3">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Minutes Played</label>
+                                    <input type="number" name="minutes_played" min="0" max="120" default="90" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Match Rating (1-10)</label>
+                                    <input type="number" name="match_rating" step="0.1" min="1" max="10" placeholder="7.0" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-3 gap-2">
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Goals</label>
+                                    <input type="number" name="goals" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Assists</label>
+                                    <input type="number" name="assists" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-medium text-slate-400 uppercase tracking-wider mb-1">Tackles</label>
+                                    <input type="number" name="tackles_won" min="0" value="0" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-1.5 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2.5 px-4 rounded-lg shadow transition mt-2">
+                                Commit Performance Record
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-sm text-slate-500 text-center py-4 font-medium">No matches available in database system configuration. Create a match schedule entry to unlock data ingestion logging pipelines.</p>
+                    {% endif %}
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+</body>
+</html>

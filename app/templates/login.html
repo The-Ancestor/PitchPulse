@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | PitchPulse</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-full antialiased font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-md w-full space-y-8 bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-lg">
+        <div>
+            <h2 class="text-center text-3xl font-extrabold tracking-tight text-emerald-400">PITCHPULSE SECURITY</h2>
+            <p class="mt-2 text-center text-sm text-slate-400">Enter credentials to authenticate session</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-3 rounded-lg text-xs font-semibold tracking-wide border {% if category == 'error' %} bg-red-950/50 border-red-800 text-red-400 {% else %} bg-emerald-950/50 border-emerald-800 text-emerald-400 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form class="mt-6 space-y-4" method="POST" action="/login">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">System Email</label>
+                <input name="email" type="email" required autocomplete="email" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Password</label>
+                <input name="password" type="password" required autocomplete="current-password" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2 px-4 rounded-lg shadow transition tracking-wide uppercase">
+                    Authenticate Identity
+                </button>
+            </div>
+        </form>
+    </div>
+
+</body>
+</html>

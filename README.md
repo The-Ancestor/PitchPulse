@@ -3,8 +3,8 @@
 PitchPulse is a production-ready, full-stack data architecture engine designed to track football player development, match engine conditioning, and athletic performance metric states (such as high-intensity sand training and recovery metrics). Built using a secure server-driven architecture, the system operates as an administrative scout dashboard with dynamic access layers.
 
 ## 🚀 Live Deployment
-* **Live Application:** [Insert your Render Deployment URL here]
-* **Database Infrastructure:**
+* **Live Application:** https://pitchpulse-rsj3.onrender.com/register
+* **Database Infrastructure**
 
 ---
 

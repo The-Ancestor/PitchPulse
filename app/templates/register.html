@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register | PitchPulse</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="h-full antialiased font-sans flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+
+    <div class="max-w-md w-full space-y-8 bg-slate-900 border border-slate-800 p-8 rounded-xl shadow-lg">
+        <div>
+            <h2 class="text-center text-3xl font-extrabold tracking-tight text-emerald-400">INITIALIZE IDENTITY</h2>
+            <p class="mt-2 text-center text-sm text-slate-400">Create your PitchPulse system profile</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-3 rounded-lg text-xs font-semibold tracking-wide border {% if category == 'error' %} bg-red-950/50 border-red-800 text-red-400 {% else %} bg-emerald-950/50 border-emerald-800 text-emerald-400 {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <form class="mt-6 space-y-4" method="POST" action="/register">
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">System Email</label>
+                <input name="email" type="email" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">Password</label>
+                <input name="password" type="password" required class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm font-mono text-slate-200 focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div>
+                <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">System Account Role</label>
+                <select name="role" class="w-full bg-slate-950 border border-slate-800 rounded-lg px-3 py-2 text-sm text-slate-200 focus:outline-none focus:border-emerald-500">
+                    <option value="Player">Player (View Only Metrics)</option>
+                    <option value="Scout">Scout (Full Administrative Input)</option>
+                </select>
+            </div>
+
+            <div class="pt-2">
+                <button type="submit" class="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-sm py-2 px-4 rounded-lg shadow transition tracking-wide uppercase">
+                    Compile Profile
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center mt-4">
+            <a href="/login" class="text-xs text-slate-500 hover:text-emerald-400 transition">Already have an active key? Authenticate here.</a>
+        </div>
+    </div>
+
+</body>
+</html>

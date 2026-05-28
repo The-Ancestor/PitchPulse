@@ -10,6 +10,37 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 
 
+@analytics_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    # If they are already logged in, send them to their dashboard
+    if current_user.is_authenticated:
+        if current_user.role == 'Scout':
+            return redirect(url_for('analytics.scout_dashboard'))
+        return redirect(url_for('analytics.player_profile', user_id=current_user.id))
+
+    if request.method == 'POST':
+        email = request.form.get('email')
+        password = request.form.get('password')
+        role = request.form.get('role', 'Player') # Defaults to Player if not specified
+
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            flash('This system email matrix is already registered.', 'error')
+            return redirect(url_for('analytics.register'))
+
+        hashed_password = generate_password_hash(password)
+
+        # Instantiate and save the new User entity
+        new_user = User(email=email, password_hash=hashed_password, role=role)
+        db.session.add(new_user)
+        db.session.commit()
+
+        flash('Registration complete. Security profile compiled successfully.', 'success')
+        return redirect(url_for('analytics.login'))
+
+    return render_template('register.html')
+
+
 @analytics_bp.route('/login', methods=['GET', 'POST'])
 def login():
     # If a user is already logged in, don't make them log in again

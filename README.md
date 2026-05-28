@@ -38,3 +38,42 @@ PitchPulse is built as a robust monolith utilizing a structured multi-layered de
 * **Database Integration:** SQLAlchemy, Alembic (Migrations)
 * **Security & Auth:** Flask-Login, Werkzeug Security
 * **Environment Tooling:** Kali Linux development workspace, Git, Virtual Environments (`venv`)
+
+
+⚙️ Local Development Installation
+
+To run this system matrix inside a local Kali Linux environment or isolated workspace:
+
+    Clone the repository:
+    Bash
+
+git clone [https://github.com/The-Ancestor/PitchPulse.git](https://github.com/The-Ancestor/PitchPulse.git)
+cd PitchPulse
+
+Initialize and trigger the virtual environment:
+Bash
+
+python3 -m venv venv
+source venv/bin/activate
+
+Compile package dependencies:
+Bash
+
+pip install -r requirements.txt
+
+Map environment parameters & connect database:
+Configure your database URI strings inside your environment or config.py files.
+
+Initialize schemas & fire up the local server:
+Bash
+
+flask shell
+>>> from app import db
+>>> db.create_all()
+>>> exit()
+flask run
+
+
+
+
+

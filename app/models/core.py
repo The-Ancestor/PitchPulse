@@ -15,7 +15,6 @@ class User(db.Model, UserMixin):
 
     # uselist=False transforms a 1:Many relationship into a strict 1:1 relationship
     player_profile = db.relationship('PlayerProfile', backref='user', uselist=False, cascade="all, delete-orphan")
-    reports_written = db.relationship('ScoutingReport', backref='scout', foreign_keys='ScoutingReport.scout_id')
 
 
 class PlayerProfile(db.Model):

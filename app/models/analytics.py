@@ -1,43 +1,6 @@
 from datetime import datetime
 from app import db
 
-class TrialSession(db.Model):
-    __tablename__ = 'trial_sessions'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    location = db.Column(db.String(100), nullable=False)  
-    session_date = db.Column(db.DateTime, nullable=False, index=True)
-    session_type = db.Column(db.String(30), nullable=False)  
-    notes = db.Column(db.Text)
-
-    attendees = db.relationship('TrialAttendance', backref='session', cascade="all, delete-orphan")
-
-
-class TrialAttendance(db.Model):
-    __tablename__ = 'trial_attendance'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    trial_session_id = db.Column(db.Integer, db.ForeignKey('trial_sessions.id', ondelete='CASCADE'), nullable=False)
-    player_id = db.Column(db.Integer, db.ForeignKey('player_profiles.id', ondelete='CASCADE'), nullable=False)
-    
-    status = db.Column(db.String(20), default='Present', nullable=False)  # Present, Absent, Injured
-    performance_rating = db.Column(db.Integer, nullable=True)  # Scout rating out of 10
-    scout_feedback = db.Column(db.Text, nullable=True)
-
-
-class ScoutingReport(db.Model):
-    __tablename__ = 'scouting_reports'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('player_profiles.id', ondelete='CASCADE'), nullable=False)
-    scout_id = db.Column(db.Integer, db.ForeignKey('users.id', ondelete='SET NULL'), nullable=True)
-    
-    potential_rating = db.Column(db.String(10), nullable=False)  # e.g., 'Elite', 'Club Level'
-    tactical_awareness = db.Column(db.Text)
-    physical_assessment = db.Column(db.Text)
-    conclusion = db.Column(db.Text, nullable=False)
-    
-    created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 
 class Match(db.Model):
@@ -73,15 +36,3 @@ class MatchStat(db.Model):
         db.UniqueConstraint('match_id', 'player_id', name='_player_match_uc'),
     )
 
-
-class InjuryLog(db.Model):
-    __tablename__ = 'injury_logs'
-    
-    id = db.Column(db.Integer, primary_key=True)
-    player_id = db.Column(db.Integer, db.ForeignKey('player_profiles.id', ondelete='CASCADE'), nullable=False)
-    
-    injury_type = db.Column(db.String(100), nullable=False)  
-    status = db.Column(db.String(20), default='Recovering', nullable=False)  
-    
-    injured_on = db.Column(db.Date, nullable=False)
-    cleared_on = db.Column(db.Date, nullable=True)

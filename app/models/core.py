@@ -1,6 +1,7 @@
 from datetime import datetime
 from app import db
 from flask_login import UserMixin
+
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     
@@ -33,5 +34,4 @@ class PlayerProfile(db.Model):
     is_active = db.Column(db.Boolean, default=True, nullable=False)
 
     match_stats = db.relationship('MatchStat', backref='player', cascade="all, delete-orphan")
-    injuries = db.relationship('InjuryLog', backref='player', cascade="all, delete-orphan")
-    trial_appearances = db.relationship('TrialAttendance', backref='player', cascade="all, delete-orphan")
+

@@ -12,7 +12,6 @@ from werkzeug.security import check_password_hash, generate_password_hash
 
 @analytics_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    # If they are already logged in, send them to their dashboard
     if current_user.is_authenticated:
         if current_user.role == 'Scout':
             return redirect(url_for('analytics.scout_dashboard'))
@@ -30,7 +29,6 @@ def register():
 
         hashed_password = generate_password_hash(password)
 
-        # Instantiate and save the new User entity
         new_user = User(email=email, password_hash=hashed_password, role=role)
         db.session.add(new_user)
         db.session.commit()
@@ -43,7 +41,7 @@ def register():
 
 @analytics_bp.route('/login', methods=['GET', 'POST'])
 def login():
-    # If a user is already logged in, don't make them log in again
+
     if current_user.is_authenticated:
         if current_user.role == 'Scout':
             return redirect(url_for('analytics.scout_dashboard'))
@@ -57,17 +55,14 @@ def login():
         user = User.query.filter_by(email=email).first()
 
         if user and check_password_hash(user.password_hash, password):
-            # Tell Flask-Login to spin up the encrypted cookie session
             login_user(user)
             flash('Access granted. Welcome back to the system matrix.', 'success')
 
-            # Role-Based Routing
             if user.role == 'Scout':
                 return redirect(url_for('analytics.scout_dashboard'))
             else:
                 return redirect(url_for('analytics.player_profile', user_id=user.id))
         
-        # Generic error message to prevent database username harvesting
         flash('Invalid email or password configuration.', 'error')
         return redirect(url_for('analytics.login'))
 
@@ -96,7 +91,6 @@ def scout_dashboard():
         
     players = query.all()
     
-    # Calculates global averages across all recorded statistics in one database operation
     team_insights = db.session.query(
         func.avg(MatchStat.match_rating).label('avg_team_rating'),
         func.sum(MatchStat.goals).label('total_team_goals')
@@ -117,37 +111,31 @@ def scout_dashboard():
 @login_required
 def register_player():
     if request.method == 'POST':
-        # 1. Capture the raw input strings from the UI form submission
         first_name = request.form.get('first_name')
         last_name = request.form.get('last_name')
         position = request.form.get('position')
         foot = request.form.get('preferred_foot', 'Right')
         weight = request.form.get('weight', type=float)
 
-        # 2. Defensive check: Ensure critical fields are not empty
         if not first_name or not last_name or not position:
             flash('Error: First name, last name, and position are mandatory.', 'error')
             return redirect(url_for('analytics.register_player'))
 
-        # 3. Create a placeholder User identity for auth decoupling requirements
-        # In prod, this would link to an actual registration invitation email pipeline
         placeholder_email = f"{first_name.lower()}.{last_name.lower()}@pitchpulse.local"
         
-        # Check if email variant collision occurs
         existing_user = User.query.filter_by(email=placeholder_email).first()
         if existing_user:
             placeholder_email = f"{first_name.lower()}.{last_name.lower()}{db.session.query(User).count()}@pitchpulse.local"
 
         new_user = User(email=placeholder_email, password_hash="pbkdf2:sha256:placeholder_hash", role="Player")
         db.session.add(new_user)
-        db.session.commit() # Commit identity to generate user.id
+        db.session.commit() 
 
-        # 4. Instantiate the physical profile card linked directly to that new user identity
         new_profile = PlayerProfile(
             user_id=new_user.id,
             first_name=first_name,
             last_name=last_name,
-            date_of_birth=datetime.strptime('2005-01-01', '%Y-%m-%d').date(), # Default baseline placeholder age
+            date_of_birth=datetime.strptime('2005-01-01', '%Y-%m-%d').date(), 
             primary_position=position,
             preferred_foot=foot,
             current_weight_kg=weight if weight else 70.0,
@@ -166,10 +154,9 @@ def register_player():
 
 @analytics_bp.route('/player/<int:player_id>', methods=['GET'])
 def player_profile(player_id):
-    # Fetch the player or throw a clean 404 error if they don't exist
+
     player = PlayerProfile.query.get_or_404(player_id)
     
-    # Career Performance Aggregations (Single-trip DB optimization)
     career_stats = db.session.query(
         func.count(MatchStat.id).label('matches_played'),
         func.sum(MatchStat.goals).label('total_goals'),
@@ -178,7 +165,6 @@ def player_profile(player_id):
         func.avg(MatchStat.match_rating).label('lifetime_rating')
     ).filter(MatchStat.player_id == player_id).first()
 
-    # Fetch all available matches in the system so the logging form dropdown can display them
     all_matches = Match.query.order_by(Match.match_date.desc()).all()
 
     return render_template(
@@ -193,11 +179,9 @@ def player_profile(player_id):
 
 @analytics_bp.route('/match/log-stat', methods=['POST'])
 def log_match_stat():
-    # Extract the form payload sent from the UI
     player_id = request.form.get('player_id', type=int)
     match_id = request.form.get('match_id', type=int)
     
-    # Instantiate the data metric row
     stat_entry = MatchStat(
         match_id=match_id,
         player_id=player_id,
@@ -211,11 +195,9 @@ def log_match_stat():
     try:
         db.session.add(stat_entry)
         db.session.commit()
-        # Flash messages let us send quick session alerts to the frontend
         flash('Match statistics successfully logged!', 'success')
     except IntegrityError:
         db.session.rollback()
-        # This catches our composite unique constraint (_player_match_uc) if a duplicate entry is made
         flash('Error: Statistics have already been logged for this player in this specific match.', 'error')
 
     return redirect(url_for('analytics.player_profile', player_id=player_id))
